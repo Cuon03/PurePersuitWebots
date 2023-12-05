@@ -47,7 +47,7 @@ def RunRobot(Robot):
     x_0 = first_position[0]
     y_0 = first_position[1]
 
-    x_goal, y_goal = VirtualTargetGenaration(x_0, y_0, rh)[1][4]
+    x_goal, y_goal = VirtualTargetGenaration(x_0, y_0, rh)[1][4] # [1][0] / [1][1] /  [1][2] /  [1][3] /  [1][5]
     print ('x_goal = ',x_goal)
     print('y_goal = ',y_goal)
     # Main loop:
