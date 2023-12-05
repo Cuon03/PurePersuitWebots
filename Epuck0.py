@@ -43,8 +43,6 @@ def PurePersuit(L, current_x, current_y, current_z, x_goal, y_goal, max_speed):
 def RunRobot(Robot):
     timestep = 64
     max_speed = 5.0
-    phi_ij = []
-    P_ij = []
     rh = 0.3 # the radii of hexagon 
     L = 0.05 # Look-ahead distance
     
