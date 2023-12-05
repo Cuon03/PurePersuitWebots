@@ -17,6 +17,29 @@ def VirtualTargetGenaration(x_0, y_0, rh):
 
     return phi_ij, P_ij
 
+def PurePersuit(L, current_x, current_y, current_z, x_goal, y_goal, max_speed):
+    distance = math.sqrt((current_x - x_goal)**2 + (current_y - y_goal)**2)
+        
+    # #Check if the robot has reached the goal position
+    if distance < 0.05:
+        # Stop the robot
+        left_speed = 0.0
+        right_speed = 0.0
+        return left_speed, right_speed
+        
+    # Calculate the targets' distance
+    target_dist = min(L, distance)
+    target_x = current_x + (target_dist / distance) * (x_goal - current_x)
+    target_y = current_y + (target_dist / distance) * (y_goal - current_y)
+    # Calculate the steering angle using the Pure Pursuit algorithm
+    alpha = math.atan2(target_y - current_y, target_x - current_x) - current_z
+    delta = math.atan2(2* L* math.sin(alpha), L**2)
+    # Set the wheel speeds based on the steering angle
+    left_speed = max_speed * (1 - delta / (2* math.pi))
+    right_speed = max_speed * (1 + delta / (2* math.pi))
+    
+    return left_speed, right_speed
+    
 def RunRobot(Robot):
     timestep = 64
     max_speed = 5.0
@@ -47,7 +70,7 @@ def RunRobot(Robot):
     x_0 = first_position[0]
     y_0 = first_position[1]
 
-    x_goal, y_goal = VirtualTargetGenaration(x_0, y_0, rh)[1][4] # [1][0] / [1][1] /  [1][2] /  [1][3] /  [1][5]
+    x_goal, y_goal = VirtualTargetGenaration(x_0, y_0, rh)[1][5] # [1][0] -> [1][5]
     print ('x_goal = ',x_goal)
     print('y_goal = ',y_goal)
     # Main loop:
@@ -61,27 +84,9 @@ def RunRobot(Robot):
         current_y = gps_value[1]
         current_z = IMU_value[2]
         
-        # Calculate the distance to the goal position
-        distance = math.sqrt((current_x - x_goal)**2 + (current_y - y_goal)**2)
+        # Get the left and Right wheels' speed
+        left_speed, right_speed = PurePersuit(L, current_x,  current_y, current_z, x_goal, y_goal, max_speed)
         
-        # #Check if the robot has reached the goal position
-        if distance < 0.05:
-            # Stop the robot
-            left_motor.setVelocity(0.0)
-            right_motor.setVelocity(0.0)
-            break
-        
-        # Calculate the targets' distance
-        target_dist = min(L, distance)
-        target_x = current_x + (target_dist / distance) * (x_goal - current_x)
-        target_y = current_y + (target_dist / distance) * (y_goal - current_y)
-        # Calculate the steering angle using the Pure Pursuit algorithm
-        alpha = math.atan2(target_y - current_y, target_x - current_x) - current_z
-        delta = math.atan2(2* L* math.sin(alpha), L**2)
-        # Set the wheel speeds based on the steering angle
-        left_speed = max_speed * (1 - delta / (2* math.pi))
-        right_speed = max_speed * (1 + delta / (2* math.pi))
-    
         # Set the wheel speeds for the robot
         left_motor.setVelocity(left_speed)
         right_motor.setVelocity(right_speed)
@@ -89,6 +94,7 @@ def RunRobot(Robot):
         #send a command to epuck_1
         command = "move_straight"
         emitter.send(command.encode())
+    
     
 if __name__ == "__main__":
     robot = Robot()
