@@ -90,8 +90,6 @@ def RunRobot(Robot):
         command = "move_straight"
         emitter.send(command.encode())
     
-        # Extract the x, y, and z coordinates
-    
 if __name__ == "__main__":
     robot = Robot()
     RunRobot(robot)
