@@ -21,7 +21,7 @@ def PurePersuit(L, current_x, current_y, current_z, x_goal, y_goal, max_speed):
     distance = math.sqrt((current_x - x_goal)**2 + (current_y - y_goal)**2)
         
     # #Check if the robot has reached the goal position
-    if distance < 0.05:
+    if distance < 0.01:
         # Stop the robot
         left_speed = 0.0
         right_speed = 0.0
@@ -43,7 +43,7 @@ def PurePersuit(L, current_x, current_y, current_z, x_goal, y_goal, max_speed):
 def RunRobot(Robot):
     timestep = 64
     max_speed = 5.0
-    rh = 0.3 # the radii of hexagon 
+    rh = 1 # the radii of hexagon (m) 
     L = 0.05 # Look-ahead distance
     
     # Enable Devices
