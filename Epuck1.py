@@ -52,8 +52,6 @@ def RunRobot(robot):
       while receiver.getQueueLength() > 0:
           
           data = receiver.getBytes()
-          # print(data_bytes)
-          # num_floats = data_bytes // struct.calcsize('f') 
           x_goal, y_goal = struct.unpack('ff', data)
           x_goal = round(x_goal, 2)
           y_goal = round(y_goal, 2)
