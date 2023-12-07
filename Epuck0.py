@@ -2,6 +2,7 @@
 
 from controller import Robot, Motor, Emitter, Receiver, GPS, InertialUnit
 import math
+import struct
 
 def VirtualTargetGenaration(x_0, y_0, rh):
     phi_0 = 0 
@@ -16,7 +17,7 @@ def VirtualTargetGenaration(x_0, y_0, rh):
     
 
     return phi_ij, P_ij
-
+# create the Robot instance.
 def PurePersuit(L, current_x, current_y, current_z, x_goal, y_goal, max_speed):
     distance = math.sqrt((current_x - x_goal)**2 + (current_y - y_goal)**2)
         
@@ -43,7 +44,7 @@ def PurePersuit(L, current_x, current_y, current_z, x_goal, y_goal, max_speed):
 def RunRobot(Robot):
     timestep = 64
     max_speed = 5.0
-    rh = 1 # the radii of hexagon (m) 
+    rh = 1 # the radii of hexagon 
     L = 0.05 # Look-ahead distance
     
     # Enable Devices
@@ -68,30 +69,29 @@ def RunRobot(Robot):
     x_0 = first_position[0]
     y_0 = first_position[1]
 
-    x_goal, y_goal = VirtualTargetGenaration(x_0, y_0, rh)[1][5] # [1][0] -> [1][5]
-    print ('x_goal = ',x_goal)
-    print('y_goal = ',y_goal)
+    goal_positions = VirtualTargetGenaration(x_0, y_0, rh)[1]
+    # print(goai_positions)
     # Main loop:
     while robot.step(timestep) != -1:
-       
-        gps_value = gps.getValues()
-        IMU_value = IMU.getRollPitchYaw()
+
+        # gps_value = gps.getValues()
+        # IMU_value = IMU.getRollPitchYaw()
         
         # Get the x, y, z coordinates
-        current_x = gps_value[0]
-        current_y = gps_value[1]
-        current_z = IMU_value[2]
+        # current_x = round(gps_value[0], 2)
+        # current_y = round(gps_value[1], 2)
+        # current_z = IMU_value[2]
         
         # Get the left and Right wheels' speed
-        left_speed, right_speed = PurePersuit(L, current_x,  current_y, current_z, x_goal, y_goal, max_speed)
+        # left_speed, right_speed = PurePersuit(L, current_x,  current_y, current_z, x_goal, y_goal, max_speed)
         
         # Set the wheel speeds for the robot
-        left_motor.setVelocity(left_speed)
-        right_motor.setVelocity(right_speed)
+        # left_motor.setVelocity(left_speed)
+        # right_motor.setVelocity(right_speed)
         
         #send a command to epuck_1
-        command = "move_straight"
-        emitter.send(command.encode())
+        goal_position = struct.pack('ff', *goal_positions[0])
+        emitter.send(goal_position)
     
     
 if __name__ == "__main__":
