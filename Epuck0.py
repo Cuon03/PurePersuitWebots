@@ -90,7 +90,7 @@ def RunRobot(Robot):
         # right_motor.setVelocity(right_speed)
         
         #send a command to epuck_1
-        goal_position = struct.pack('ff', *goal_positions[0])
+        goal_position = struct.pack('ff', *goal_positions[0]) # [0] -> [5]
         emitter.send(goal_position)
     
     
